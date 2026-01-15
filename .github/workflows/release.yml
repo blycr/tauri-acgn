@@ -69,5 +69,5 @@ jobs:
           tagName: v${{ steps.get_version.outputs.version }}
           releaseName: "ACGN Manager v${{ steps.get_version.outputs.version }}"
           releaseBody: ${{ steps.release_notes.outputs.notes }}
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
