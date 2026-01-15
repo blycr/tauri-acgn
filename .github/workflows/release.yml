@@ -1,0 +1,73 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-22.04, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Get version from package.json
+        id: get_version
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Read Release Notes
+        id: release_notes
+        shell: bash
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          NOTE_FILE="docs/v${VERSION}.md"
+          if [ -f "$NOTE_FILE" ]; then
+            # Using a multi-line output for GITHUB_OUTPUT
+            echo "notes<<EOF" >> $GITHUB_OUTPUT
+            cat "$NOTE_FILE" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "notes=Release v${VERSION}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v${{ steps.get_version.outputs.version }}
+          releaseName: "ACGN Manager v${{ steps.get_version.outputs.version }}"
+          releaseBody: ${{ steps.release_notes.outputs.notes }}
+          releaseDraft: true
+          prerelease: false

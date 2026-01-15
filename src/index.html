@@ -1,39 +1,35 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri App</title>
-    <script type="module" src="/main.js" defer></script>
-  </head>
+<!DOCTYPE html>
+<html lang="zh-CN">
 
-  <body>
-    <main class="container">
-      <h1>Welcome to Tauri</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACGN Manager</title>
+  <!-- 引入样式表 -->
+  <link rel="stylesheet" href="/styles.css" />
+  <!-- 引入主逻辑入口，使用 module 模式 -->
+  <script type="module" src="/main.js" defer></script>
+</head>
 
-      <div class="row">
-        <a href="https://tauri.app" target="_blank">
-          <img src="/assets/tauri.svg" class="logo tauri" alt="Tauri logo" />
-        </a>
-        <a
-          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"
-          target="_blank"
-        >
-          <img
-            src="/assets/javascript.svg"
-            class="logo vanilla"
-            alt="JavaScript logo"
-          />
-        </a>
-      </div>
-      <p>Click on the Tauri logo to learn more about the framework</p>
+<body>
+  <!-- 主容器 -->
+  <div class="container">
+    <h1>ACGN Manager</h1>
 
-      <form class="row" id="greet-form">
-        <input id="greet-input" placeholder="Enter a name..." />
-        <button type="submit">Greet</button>
-      </form>
-      <p id="greet-msg"></p>
-    </main>
-  </body>
+    <!-- 控制卡片模块 -->
+    <div class="card">
+      <p id="welcome-text">欢迎来到你的私人 ACGN 资源管理器</p>
+      <!-- 核心交互按钮 -->
+      <button id="select-folder">选择漫画库目录</button>
+      <!-- 显示当前路径 -->
+      <div id="path-display" class="path-display">未选择目录</div>
+    </div>
+
+    <!-- 动态排版区域：用于展示扫描到的漫画列表 -->
+    <div id="manga-list" class="manga-grid">
+      <!-- JS 将在这里动态插入内容 -->
+    </div>
+  </div>
+</body>
+
 </html>
